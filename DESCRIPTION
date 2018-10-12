@@ -1,0 +1,13 @@
+Package: catforecast
+Type: Package
+Title: Time-series Analysis with CatBoost 
+Version: 0.1.0
+Author: Dguru
+Maintainer: The package maintainer <yourself@somewhere.net>
+Description: Time-series Analysis with CatBoost  
+License: -
+Encoding: UTF-8
+LazyData: true
+Depends: R (>= 3.5.0)
+Imports: 
+Built: R 3.5.1;  2018-10-10 08:57:58 UTC; windows
