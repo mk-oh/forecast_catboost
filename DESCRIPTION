@@ -7,9 +7,9 @@ Description: Time-series Anlaysis using Catboost
 License: GPL-3
 Depends: R (>= 3.1.0),
  forecast,
- xgboost,
- catboost
-Imports : dplyr
+ xgboost
+Suggest : catboost
+Imports : dplyr, catboost
 Encoding: UTF-8
 LazyData: true
 VignetteBuilder: knitr
