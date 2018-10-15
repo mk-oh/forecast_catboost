@@ -1,4 +1,4 @@
-Package: cat
+Package: catforecast
 Title: TS Analysis using Catboost
 Type: Package
 Version: 0.1.0
