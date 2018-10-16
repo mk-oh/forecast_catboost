@@ -1,6 +1,6 @@
 \name{cat.forecast}
 \alias{cat.forecast}
-\title{Anlysis with catboost}
+\title{Analysis with catboost}
 \usage{
 cat.forecast(y, h = 42, xreg = NULL, pred_xreg = NULL, params = NULL, 
     maxlag = max(42, 4 * frequency(y)), valid = TRUE, boxcox = TRUE, 
@@ -10,7 +10,7 @@ cat.forecast(y, h = 42, xreg = NULL, pred_xreg = NULL, params = NULL,
 
 
 \description{
-Prints 'Timeseries anlysis using Catboost'.
+'Timeseries analysis using Catboost'.
 }
 \examples{
 catforecast:::cat.forecast(AirPassengers)
