@@ -1,6 +1,6 @@
 \name{xgboost.forecast}
 \alias{xgboost.forecast}
-\title{Anlysis with xgboost}
+\title{Analysis with xgboost}
 \usage{
 cat.forecast(y, h = 42, maxlag = max(42, 4 * frequency(y)), xreg = NULL, 
     pred_xreg = NULL, nrounds = 500, params = NULL, nrounds_method = c("cv", 
@@ -11,7 +11,7 @@ cat.forecast(y, h = 42, maxlag = max(42, 4 * frequency(y)), xreg = NULL,
 
 
 \description{
-Prints 'Timeseries anlysis using XGboost'.
+ 'Timeseries analysis using XGboost'.
 }
 \examples{
 catforecast:::xgboost.forecast(AirPassengers)
