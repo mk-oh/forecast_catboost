@@ -8,7 +8,7 @@ License: GPL-3
 Depends: R (>= 3.1.0),
  forecast,
  xgboost
-Suggest : catboost
+Suggest : catboost, zoo, dplyr
 Imports : dplyr
 Encoding: UTF-8
 LazyData: true
