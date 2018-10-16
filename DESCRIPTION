@@ -13,3 +13,7 @@ Imports : dplyr
 Encoding: UTF-8
 LazyData: true
 VignetteBuilder: knitr
+Collate:
+    'func_v2.R'
+    'cat_v2.R'
+    'xg_v2.R'
