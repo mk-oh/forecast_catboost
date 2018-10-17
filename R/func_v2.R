@@ -1,14 +1,24 @@
-#############################
-lag_y <- function (y, maxlag, keeporig = TRUE) {
+#' The make variable for modeling
+#'
+#'\code{lag_y} TimeSeries data translate for modeling
+#'
+#' @param y input time-seires data
+#' @param maxlag make data variable
+#'
+#' @return Translate time-seires data for modeling
+#'
+#' @export
+#'
+#' @examples
+#' lag_y(AirPassengers, 5)
+
+lag_y <- function (y, maxlag) {
   if (!is.vector(y) & !is.ts(y)) {
     stop("x must be a vector or time series")
   }
 
-  x <- as.vector(y)
-  n <- length(y)
-  z <- matrix(0,
-              nrow = (n - maxlag),
-              ncol = maxlag + 1)
+  x <- as.vector(y); n <- length(y)
+  z <- matrix(0, nrow = (n - maxlag), ncol = maxlag + 1)
 
   for (i in 1:ncol(z)) {
     z[, i] <- x[(maxlag + 2 - i):(n + 1 - i)]
@@ -16,12 +26,26 @@ lag_y <- function (y, maxlag, keeporig = TRUE) {
 
   varname <- "x"
   colnames(z) <- c(varname, paste0(varname, "_lag", 1:maxlag))
-  if (!keeporig) {  z <- z[, -1] }
+  z <- z[, -1]
 
   return(z)
 }
 
-########################################################
+#' The make xreg variable  for modeling
+#'
+#'\code{lag_y} xreg data translate for modeling
+#'
+#' @param y input External Variable data
+#' @param maxlag make data variable
+#'
+#' @return Translate External Variable data for modeling
+#'
+#' @export
+#'
+#' @examples
+#' lag_xreg(AirPassengers, 5)
+
+
 lag_xreg <- function (x, maxlag) {
   if (!is.matrix(x)) {
     stop("X needs to be a matrix")
@@ -46,7 +70,22 @@ lag_xreg <- function (x, maxlag) {
   return(m)
 }
 
-#---- Box-Cox Translataion
+
+
+#' Box-Cox Translataion
+#'
+#'\code{Boxcox} Box-Cox Translataion
+#'
+#' @param y input Time-seires data
+#' @param lambda lamdba ( default = 1)
+#'
+#' @return Output - Box-Cox Translataion
+#'
+#' @export
+#'
+#' @examples
+#' Boxcox(AirPassengers )
+
 
 Boxcox <- function (y, lambda = 1) {
   if (lambda != 0) {
@@ -65,6 +104,7 @@ InvBoxcox <- function (y, lambda = 1) {
   }
   return(y)
 }
+
 
 #---- Predict /w Roll-up
 
@@ -89,59 +129,6 @@ rollup_pred <- function(x, y,
   return(list(x = rbind(x, newrow), y = c(y, pred)))
 }
 
-
-#############
-
-validate_xgbar <- function (y, xreg = NULL, nrounds = 50, params = NULL,...) {
-  n <- length(y)
-  split_n <- round(0.8 * n)
-
-  trainy <- ts(y[1:split_n],
-               start = start(y),
-               frequency = frequency(y))
-  testy <- y[(split_n + 1):n]
-
-  h <- length(testy)
-
-  if (!is.null(xreg)) {
-    trainxreg <- xreg[1:split_n, ]
-    testxreg <- xreg[(split_n + 1):n, ]
-  }
-
-
-
-
-  xg_valid <- function(nrounds) {
-    if (!is.null(xreg)) {
-      train_md <- xgboost.ts(trainy,
-                             xreg = xreg,
-                             nrounds_method = "manual",
-                             params = params,
-                             nrounds = nrounds)
-    } else {
-      train_md <- xgboost.ts(trainy,
-                             nrounds_method = "manual",
-                             parms = parms,
-                             nrounds = nrounds)
-    }
-
-    fc <- forecast(train_md, h = h)
-    result <- accuracy(fc, testy)[2, 6]
-    return(result)
-  }
-
-  mases <- sapply(as.list(1:nrounds), xg_valid)
-  best_nrounds <- min(which(mases == min(mases)))
-  output <- list(best_nrounds = best_nrounds, best_mase = min(mases))
-  return(output)
-}
-
-
-
-
-######################################################
-#### Function for Xgboost_ts
-################### Forecast #####################################################
 
 forecast_ap <- function (object, h = 42, xreg = NULL, lambda = object$lambda,
                          boxcox = TRUE, verbose = TRUE,...

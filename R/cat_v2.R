@@ -1,4 +1,25 @@
-#### CATBOOST FOR TIMESERIES
+#' The analysis using Catboost
+#'
+#'\code{cat.forecast} Analysis/Forecast Using Catboost
+#'
+#' @param y input time-seires vector
+#' @param h forecast preiod
+#' @param xreg External Variable for using modeling (need to matrix class)
+#' @param pred_xreg External Variable for using forecast (need to matrix class )
+#' @param maxlag data lag length
+#' @param valid Validation (TRUE / FALSE)
+#' @param boxcox boxcox (TRUE / FALSE)
+#' @param ts_clean clean Outlier (TRUE / FALSE)
+#' @param ts_lambda lambda with clean Outlier
+#' @param season_type treat a Type of season ('dummy', "decompose", "none")
+#'
+#' @return time-seires data forecast
+#'
+#' @export
+#'
+#' @examples
+#' cat.forecast(AirPassengers)
+
 cat.forecast <- function (y,
                           h = 42,
                           xreg = NULL,
@@ -11,7 +32,7 @@ cat.forecast <- function (y,
                           boxcox = TRUE,
                           ts_clean = TRUE,
                           ts_lambda = 1,
-                          season_type = c( 'dummy',"decompose", "none"),
+                          season_type = c("dummy", "decompose", "none"),
                           verbose = TRUE, ...)  {
 
   season_type = match.arg(season_type)
@@ -106,7 +127,7 @@ cat.forecast <- function (y,
   #---- make time lag
 
   x <- matrix(0, nrow = n, ncol = ncolx)
-  x[, 1:maxlag] <- lag_y(target_y, maxlag, keeporig = FALSE)
+  x[, 1:maxlag] <- lag_y(target_y, maxlag)
 
 
   if (f == 1 || season_type == "decompose" || season_type == "none") {

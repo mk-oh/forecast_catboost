@@ -1,29 +1,38 @@
+#' The analysis using xgboost
+#'
+#'\code{xgboost.forecast} Analysis/Forecast Using xgboost
+#'
+#' @param y input time-seires vector
+#' @param h forecast preiod
+#' @param xreg External Variable for using modeling (need to matrix class)
+#' @param pred_xreg External Variable for using forecast (need to matrix class )
+#' @param maxlag data lag length
+#' @param nrounds_method cv : Cross-Vaildation / none - not using
+#' @param boxcox boxcox (TRUE / FALSE)
+#' @param ts_clean clean Outlier (TRUE / FALSE)
+#' @param ts_lambda lambda with clean Outlier
+#' @param season_type treat a Type of season ('dummy', "decompose", "none")
+#'
+#' @return time-seires data forecast
+#'
+#' @export
+#'
+#' @examples
+#' xgboost.forecast(AirPassengers)
 
-
-######################################################
-#### Function for Xgboost_ts
-
-
-
-################### Forecast #####################################################
-############################################################
-
-############################################################
 xgboost.forecast <- function (y,
+                              xreg = NULL,
+                              pred_xreg = NULL,
                               #- priod
                               h = 42,
                               #- data lag set
                               maxlag = max(42, 4 * frequency(y)),
-                              #- External Value Use (require : Matrix type)
-                              xreg = NULL,
-                              pred_xreg = NULL,
                               #- Model Parameter - #
                               nrounds = 500,
                               params = NULL,
                               nrounds_method = c("cv",# "v",
                                                  "none"),
                               nfold = ifelse(length(y) > 720, 10, 5),
-
                               #- Data. Preprocess
                               # 1. Boxcox Trans
                               boxcox = TRUE,
@@ -211,7 +220,7 @@ xgboost.forecast <- function (y,
 
 
   x <- matrix(0, nrow = n, ncol = ncolx)
-  x[, 1:maxlag] <- lag_y(target_y, maxlag, keeporig = FALSE)
+  x[, 1:maxlag] <- lag_y(target_y, maxlag)
 
 
   if (f == 1 || season_type == "decompose" || season_type == "none") {
@@ -244,14 +253,7 @@ xgboost.forecast <- function (y,
                  nfold = nfold, early_stopping_rounds = 10, maximize = FALSE,
                  verbose = verbose, ...)
     nrounds_use <- cv$best_iteration
-  } else {
-    if (nrounds_method == "v") {
-      nrounds_use <- validate_xgbar(y, xreg = xreg, early_stopping_rounds = 10, params = params)$best_nrounds
-    } else {
-      nrounds_use <- nrounds
-    }
   }
-
 
   if (verbose) {
     message("Fitting model")
@@ -289,6 +291,7 @@ xgboost.forecast <- function (y,
   output <- list(y = temp_y, y2 = y2, x = x, model = model,
                  fitted = fitted, maxlag = maxlag, season_type = season_type,
                  diffs = diffs, lambda = lambda, method = method)
+
   if (season_type == "decompose") {
     output$decomp <- decomp
   }
