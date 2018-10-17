@@ -30,17 +30,12 @@ xgboost.forecast <- function (y,
                               #- Model Parameter - #
                               nrounds = 500,
                               params = NULL,
-                              nrounds_method = c("cv",# "v",
-                                                 "none"),
+                              nrounds_method = c("cv", "none"),
                               nfold = ifelse(length(y) > 720, 10, 5),
-                              #- Data. Preprocess
-                              # 1. Boxcox Trans
                               boxcox = TRUE,
                               lambda = BoxCox.lambda(y),
-                              # 2. Outlier
                               ts_clean = TRUE,
                               ts_lambda = 1,
-                              # 3. Data lag using Type
                               season_type = c("decompose", 'dummy', "none"),
                               verbose = TRUE, ...)  {
 
@@ -147,77 +142,6 @@ xgboost.forecast <- function (y,
 
 
 
-  # if (!"ts" %in% class(y)) {
-  #    stop("class check : y is time-seires")
-  # }
-
-  # if (!is.null(xreg)) {
-  #     if (class(xreg) == "ts" | "data.frame" %in% class(xreg)) {
-  #         xreg <- as.matrix(xreg)
-  #     }
-  #     if (!is.numeric(xreg) | !is.matrix(xreg)) {
-  #         stop("xreg check : class is numeric vector or a matrix")
-  #     }
-  # }
-
-  # # if(ts_clean == TRUE) {
-  # #     y <- tsclean(y)
-  # # }
-
-  # # orign <- length(y)
-  # # target_y <- Boxcox(y, lambda = lambda)
-  # # K = max(1, min(round(f/4 - 1), 10)
-
-
-  # # if (length(y) < 46) {
-  # #     stop("must be data length > 45")
-  # # }
-
-
-  # # if (maxlag > (orign - f - round(f/4))) {
-  # #     warning(paste("y is too short ", maxlag, "--> ",
-  # #         orign - f - round(f/4)))
-  # #     maxlag <- orign - f - round(f/4)
-  # # }
-
-  # # if (maxlag != round(maxlag)) {
-  # #     maxlag <- round(maxlag)
-  # #     if (verbose) {
-  # #         message(paste("maxlag is need to int, change to ", maxlag))
-  # #     }
-  # # }
-
-
-  # if (season_type == "decompose") {
-  #     decomp <- decompose(target_y, type = "multiplicative")
-  #     target_y <- seasadj(decomp)
-  # }
-
-  # if (season_type == "dummy" & f > 1) {
-  #     ncolx <- maxlag + f - 1
-  # }
-
-  # xreg_temp <- xreg
-  # n <- orign - maxlag
-
-  # y2 <- ts(target_y[-(1:(maxlag))],
-  #         start = time(target_y)[maxlag + 1],
-  #         frequency = f)
-
-  # if (nrounds_method == "cv" & n < 90) {
-  #     warning("Data is too short. need to > 90")
-  #     nrounds_method <- "v"
-  # }
-
-  # if (season_type == "decompose") {
-  #     ncolx <- maxlag
-  # }
-
-  # if (season_type == "none" | f == 1) {
-  #     ncolx <- maxlag
-  # }
-
-
 
   x <- matrix(0, nrow = n, ncol = ncolx)
   x[, 1:maxlag] <- lag_y(target_y, maxlag)
@@ -253,6 +177,8 @@ xgboost.forecast <- function (y,
                  nfold = nfold, early_stopping_rounds = 10, maximize = FALSE,
                  verbose = verbose, ...)
     nrounds_use <- cv$best_iteration
+  } else{
+    nrounds_use <- nrounds
   }
 
   if (verbose) {
@@ -261,7 +187,7 @@ xgboost.forecast <- function (y,
 
 
 
-  model <- xgboost(data = x, label = y2, nrounds = nrounds,
+  model <- xgboost(data = x, label = y2, nrounds = nrounds_use,
                    params = params, early_stopping_rounds = 20,
                    verbose = verbose)
 

@@ -31,21 +31,6 @@ lag_y <- function (y, maxlag) {
   return(z)
 }
 
-#' The make xreg variable  for modeling
-#'
-#'\code{lag_y} xreg data translate for modeling
-#'
-#' @param y input External Variable data
-#' @param maxlag make data variable
-#'
-#' @return Translate External Variable data for modeling
-#'
-#' @export
-#'
-#' @examples
-#' lag_xreg(AirPassengers, 5)
-
-
 lag_xreg <- function (x, maxlag) {
   if (!is.matrix(x)) {
     stop("X needs to be a matrix")
